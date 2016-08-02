@@ -7,6 +7,17 @@
 
 #include "server.h"
 
+void sem_lock(sem_t *sem)
+{
+	 if(sem_wait(sem)<0)
+		 perror("sem_wait()");
+}
+void sem_unlock(sem_t *sem)
+{
+	 if(sem_post(sem)<0)
+		perror("sem_post()");
+
+}
 
 int initServer(char *addr, int port)
 {
@@ -34,7 +45,7 @@ int initServer(char *addr, int port)
 	return serv_fd;
 }
 
-void *get_sharedMem_addr(char *name, int *fd)
+void *get_sharedMem_addr(const char *name, int *fd)
 {
 	if((*fd = shm_open(name, O_CREAT | O_RDWR,
 				S_IRWXU | S_IRWXG))<0)
@@ -87,10 +98,10 @@ int get_log_size()
 //must be done with semaphore!!!!!
 void write_log_shm(char *buffer, int len)
 {
-	pthread_mutex_lock(&shared_mem_mutex);
+	sem_lock(sem);
 	shared_mem_size+=strlen("log: ")+len+1;
 	int fd;
-	void *addr_ = get_sharedMem_addr("/log", &fd);
+	void *addr_ = get_sharedMem_addr(SHARED_MEM_NAME, &fd);
 
 	int line_size = strlen("log: ")+len+1;
 	if(lines_count<MAX_LOG_LINES)
@@ -115,7 +126,7 @@ void write_log_shm(char *buffer, int len)
 	strcat(addr_, buffer);
 	strcat(addr_, "\n");
 	close(fd);
-	pthread_mutex_unlock(&shared_mem_mutex);
+	sem_unlock(sem);
 }
 void write_log_file(char *buffer, int len)
 {
@@ -129,7 +140,7 @@ void write_log_file(char *buffer, int len)
 void read_log_shm(int sock_d)
 {
 	int fd;
-	void *addr_ = get_sharedMem_addr("/log", &fd);
+	void *addr_ = get_sharedMem_addr(SHARED_MEM_NAME, &fd);
 	send_str(sock_d, addr_);
 	close(fd);
 }
@@ -174,16 +185,16 @@ void send_result(int sock_d, char *pattern ,  double num1,
 void calculate(int sock_d,char *msg, double num1, double num2)
 {
 	if(strcmp(msg, "+")==0)
-		send_result(sock_d,"%f+%f=%f\n",
+		send_result(sock_d,"%.2f+%.2f=%.2f\n",
 					num1, num2,num1+num2);
 	else if(strcmp(msg, "-")==0)
-		send_result(sock_d,"%f-%f=%f\n",
+		send_result(sock_d,"%.2f-%.2f=%f\n",
 					num1, num2,num1-num2);
 	else if(strcmp(msg, "/")==0)
-		send_result(sock_d,"%f/%f=%f\n",
+		send_result(sock_d,"%.2f/%.2f=%f\n",
 					num1, num2,num1/num2);
 	else if(strcmp(msg, "*")==0)
-		send_result(sock_d,"%f*%f=%f\n",
+		send_result(sock_d,"%.2f*%.2f=%.2f\n",
 					num1, num2,num1*num2);
 
 }

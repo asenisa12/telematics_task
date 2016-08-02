@@ -21,6 +21,7 @@
 #include "message_utils.h"
 #include <sys/mman.h>
 #include <stdbool.h>
+#include <semaphore.h>
 
 
 #define SERV_ERR -1
@@ -35,6 +36,9 @@ static const int DEST_CONN = 16;
 
 extern pthread_mutex_t client_mutex;
 extern pthread_mutex_t shared_mem_mutex;
+extern const char *SHARED_MEM_NAME;
+extern const char *SEMAPHORE_NAME;
+sem_t *sem;
 
 int fd_arr_size;
 int *fd_arr;
@@ -49,6 +53,9 @@ FILE *logFile;
 bool server_disconn;
 
 struct sockaddr_in serv_addr;
+
+void sem_lock(sem_t *sem);
+void sem_unlock(sem_t *sem);
 
 //initializing  function for the server
 int initServer(char *addr, int port);
@@ -84,7 +91,7 @@ void do_work(CalcMessage *c_msg, int sockd, bool *async,
 		int *current, double *numbers);
 
 //gets the address of a shared memory
-void *get_sharedMem_addr(char *name,  int *fd);
+void *get_sharedMem_addr(const char *name,  int *fd);
 
 //checking if the client has sent commands for task different
 //from saving or calculating numbers

@@ -7,7 +7,8 @@
 #include "server.h"
 
 
-const char *SERV_MSG_QUEUE ="/serv_q";
+const char *SHARED_MEM_NAME ="/log_calc_server";
+const char *SEMAPHORE_NAME="log_sem";
 pthread_mutex_t client_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t shared_mem_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -36,8 +37,11 @@ void interupt(int signo)
 {
 	server_disconn=true;
 	print_to_cl("server is disconnecting\n");
-	shm_unlink("/log");
-
+	if(shm_unlink(SHARED_MEM_NAME)<0)
+		perror("shm_unlink()");
+	sem_close(sem);
+	if(sem_unlink(SEMAPHORE_NAME)<0)
+		perror("sem_unlink()");
 	sleep(3);
 
 	int i;
@@ -51,6 +55,10 @@ void interupt(int signo)
 int main(void) {
 
 	lines_count=0;
+	unsigned int val=1;
+	sem =sem_open(SEMAPHORE_NAME, O_CREAT, O_RDWR, val);
+	if(sem == SEM_FAILED)
+		printf("sem_open() failed\n");
 
 	struct sockaddr_in client_addr;
 	int server_fd = initServer("127.0.0.1", 9080);
