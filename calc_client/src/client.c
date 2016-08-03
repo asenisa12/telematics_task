@@ -35,7 +35,7 @@ void* cli_receive(){
 	pthread_detach(pthread_self());
 	uint8_t server_reply[MAXLINE];
 
-	char *serv_discon_msg="server is disconnecting";
+	char *serv_discon_msg="server: disconnecting";
 	int size;
 	while((size = recv(sockfd , server_reply , MAXLINE, 0)) > 0)
 	{
@@ -83,6 +83,7 @@ void cli_send()
 
 	while(work)
 	{
+		printf("\n>>");
 		scanf("%s" , message);
 		if(!check_commands(message))
 		{
@@ -107,6 +108,7 @@ void cli_send()
 			puts("--->you are in calculating mode\n");
 			status=CALCULATING;
 		}
+		else usleep(5000);
 
 	}
 }
