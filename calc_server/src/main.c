@@ -36,7 +36,7 @@ void wait_child(int signo)
 void interupt(int signo)
 {
 	server_disconn=true;
-	print_to_cl("server is disconnecting\n");
+	print_to_cl("server: disconnecting\n");
 	if(shm_unlink(SHARED_MEM_NAME)<0)
 		perror("shm_unlink()");
 	sem_close(sem);
