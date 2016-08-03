@@ -7,16 +7,15 @@
 
 #include "server.h"
 
-void sem_lock(sem_t *sem)
+void sem_lock(sem_t *sem_)
 {
-	 if(sem_wait(sem)<0)
-		 perror("sem_wait()");
+	if(sem_wait(sem_)<0)
+		perror("sem_wait()");
 }
-void sem_unlock(sem_t *sem)
+void sem_unlock(sem_t *sem_)
 {
-	 if(sem_post(sem)<0)
+	if(sem_post(sem_)<0)
 		perror("sem_post()");
-
 }
 
 int initServer(char *addr, int port)
@@ -126,6 +125,7 @@ void write_log_shm(char *buffer, int len)
 	strcat(addr_, buffer);
 	strcat(addr_, "\n");
 	close(fd);
+
 	sem_unlock(sem);
 }
 void write_log_file(char *buffer, int len)
@@ -165,8 +165,9 @@ void read_log_file(int sock_d)
 
 void print_to_cl(char *msg)
 {
-	puts(msg);
-	write_log_shm(msg,strlen(msg));
+	char *msg_=msg+strlen("server: ");
+	puts(msg_);
+	write_log_shm(msg_,strlen(msg_));
 	int i;
 	for(i=0;i<fd_arr_size; i++)
 		send_str(fd_arr[i], msg);

@@ -6,7 +6,11 @@
  */
 #include "client.h"
 
-
+const char valid_commands[VALID_COMMANDS][COMMAND_SIZE] =
+{
+		"+","-","/", "*", "terminate",
+		"calculate", "monitor", "log", "async"
+};
 void interupt(int signo)
 {
 	puts("INTERUPT\n");

@@ -19,12 +19,24 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <arpa/inet.h>
+#include <ctype.h>
 
+#define DEFAULT 0
+#define MONITORING 1
+#define CALCULATING 2
+#define VALID_COMMANDS 9
+#define COMMAND_SIZE 10
 #define MAXLINE 2000
 int sockfd;
 
+extern const char
+	valid_commands[VALID_COMMANDS][COMMAND_SIZE];
+
 //
 bool work;
+int status;
+
+bool check_commands(char *str);
 
 //creating connection with the server
 int create_con(char *addr, int port);

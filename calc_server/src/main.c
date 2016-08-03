@@ -8,20 +8,20 @@
 
 
 const char *SHARED_MEM_NAME ="/log_calc_server";
-const char *SEMAPHORE_NAME="log_sem";
+const char *SEMAPHORE_NAME="log_semaphore";
 pthread_mutex_t client_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t shared_mem_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 //called when new client has connected to the server
 void new_client(int signo)
 {
-	print_to_cl("client has connected\n");
+	print_to_cl("server: client has connected\n");
 }
 
 //called when client disconnects from server
 void client_discon(int signo)
 {
-	print_to_cl("a client is disconnecting\n");
+	print_to_cl("server: a client is disconnecting\n");
 }
 //called when child process ends
 void wait_child(int signo)
@@ -56,10 +56,10 @@ int main(void) {
 
 	lines_count=0;
 	unsigned int val=1;
-	sem =sem_open(SEMAPHORE_NAME, O_CREAT, O_RDWR, val);
+	//shm_unlink(SHARED_MEM_NAME);
+	sem =sem_open(SEMAPHORE_NAME, O_CREAT|O_EXCL, O_RDWR, val);
 	if(sem == SEM_FAILED)
-		printf("sem_open() failed\n");
-
+		perror("sem_open()");
 	struct sockaddr_in client_addr;
 	int server_fd = initServer("127.0.0.1", 9080);
 	if(server_fd<0)

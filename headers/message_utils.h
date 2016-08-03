@@ -15,8 +15,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-
+#include <stdbool.h>
 
 static const int  NUMBER = 1;
 static const int  MESSAGE = 2;
