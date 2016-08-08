@@ -14,15 +14,15 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <mqueue.h>
 #include <pthread.h>
 #include <arpa/inet.h>
-#include <sys/stat.h>
-#include "message.pb-c.h"
-#include "message_utils.h"
 #include <sys/mman.h>
 #include <stdbool.h>
 #include <semaphore.h>
+#include "./message_utils.h"
+#include "message.pb-c.h"
 
 
 #define SERV_ERR -1
@@ -33,6 +33,7 @@ static const int SHARED_MEM_SIZE = 2;
 
 static const int NEW_CONN = 30;
 static const int DEST_CONN = 16;
+
 
 
 extern pthread_mutex_t client_mutex;

@@ -1,0 +1,6 @@
+message CalcMessage
+{
+	required int32 id=1;
+	optional string msg=2;
+	optional double num=3;
+}

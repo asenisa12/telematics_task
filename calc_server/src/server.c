@@ -31,9 +31,9 @@ int initServer(char *addr, int port)
 
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(port);
-	inet_pton(AF_INET,addr, &serv_addr.sin_addr);
+	//inet_pton(AF_INET,addr, &serv_addr.sin_addr);
 
-	//serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	if(bind(serv_fd, (struct sockaddr*)&serv_addr,
 			sizeof(serv_addr))<0)
 		return SERV_ERR;

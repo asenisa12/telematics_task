@@ -3,6 +3,9 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
+O_SRCS += \
+/home/devteam/workspace/telematics_task/headers/message.pb-c.o 
+
 C_SRCS += \
 /home/devteam/workspace/telematics_task/headers/message.pb-c.c \
 /home/devteam/workspace/telematics_task/headers/message_utils.c 
